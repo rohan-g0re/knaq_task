@@ -29,7 +29,7 @@ interface Props {
 }
 
 export default function AlertTable({ alerts, onAssign }: Props) {
-  const { onAcknowledge, acknowledging } = useAlertActions();
+  const { onAcknowledge, busy } = useAlertActions();
 
   return (
     <TableContainer component={Paper} variant="outlined">
@@ -81,7 +81,7 @@ export default function AlertTable({ alerts, onAssign }: Props) {
                   {a.status === "new" && (
                     <Tooltip title="Acknowledge">
                       <span>
-                        <IconButton size="small" disabled={acknowledging} onClick={() => onAcknowledge(a.id)}>
+                        <IconButton size="small" disabled={busy} onClick={() => onAcknowledge(a.id)}>
                           <CheckIcon fontSize="small" />
                         </IconButton>
                       </span>

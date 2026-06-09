@@ -1,9 +1,11 @@
 "use client";
 
 import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
+import BlockIcon from "@mui/icons-material/Block";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import NoteIcon from "@mui/icons-material/StickyNote2";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
+import ReplayIcon from "@mui/icons-material/Replay";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -17,6 +19,8 @@ const ICONS: Record<string, React.ReactNode> = {
   assigned: <AssignmentIndIcon fontSize="small" />,
   resolved: <TaskAltIcon fontSize="small" />,
   note: <NoteIcon fontSize="small" />,
+  dismissed: <BlockIcon fontSize="small" />,
+  reopened: <ReplayIcon fontSize="small" />,
 };
 
 const ACTION_LABEL: Record<string, string> = {
@@ -25,6 +29,8 @@ const ACTION_LABEL: Record<string, string> = {
   assigned: "Assigned",
   resolved: "Resolved",
   note: "Note added",
+  dismissed: "Dismissed",
+  reopened: "Reopened",
 };
 
 export default function Timeline({ entries }: { entries: TimelineEntry[] }) {

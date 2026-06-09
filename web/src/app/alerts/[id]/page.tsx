@@ -30,7 +30,7 @@ export default function AlertDetailPage() {
   const params = useParams<{ id: string }>();
   const id = Number(params.id);
   const { data: alert, isLoading, isError, error, refetch } = useGetAlertQuery(id);
-  const { onAcknowledge, acknowledging } = useAlertActions();
+  const { onAcknowledge, onDismiss, onReopen, busy } = useAlertActions();
   const [resolveOpen, setResolveOpen] = useState(false);
   const [assignOpen, setAssignOpen] = useState(false);
 
@@ -88,7 +88,7 @@ export default function AlertDetailPage() {
       {/* Contextual actions — backend is the source of truth; buttons are a hint. */}
       <Stack direction="row" spacing={1} sx={{ mb: 3 }}>
         {isNew && (
-          <Button variant="contained" disabled={acknowledging} onClick={() => onAcknowledge(alert.id)}>
+          <Button variant="contained" disabled={busy} onClick={() => onAcknowledge(alert.id)}>
             Acknowledge
           </Button>
         )}
@@ -100,6 +100,16 @@ export default function AlertDetailPage() {
         {!terminal && (
           <Button variant="outlined" onClick={() => setAssignOpen(true)}>
             {alert.assignedTo ? "Reassign" : "Assign"}
+          </Button>
+        )}
+        {!terminal && (
+          <Button variant="text" color="inherit" disabled={busy} onClick={() => onDismiss(alert.id)}>
+            Dismiss
+          </Button>
+        )}
+        {terminal && (
+          <Button variant="outlined" disabled={busy} onClick={() => onReopen(alert.id)}>
+            Reopen
           </Button>
         )}
       </Stack>

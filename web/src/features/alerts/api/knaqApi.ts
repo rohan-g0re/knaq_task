@@ -53,9 +53,30 @@ export const knaqApi = createApi({
       providesTags: ["User"],
     }),
 
-    // Mutations are pessimistic: await the server, then invalidate so queue + detail refetch.
+    // Mutations are pessimistic by default: await the server, then invalidate so queue + detail
+    // refetch. acknowledge is additionally optimistic (see onQueryStarted) and rolls back on error.
     acknowledge: build.mutation<Alert, number>({
       query: (id) => ({ url: `/alerts/${id}/acknowledge`, method: "POST" }),
+      async onQueryStarted(id, { dispatch, queryFulfilled }) {
+        const patch = dispatch(
+          knaqApi.util.updateQueryData("getAlert", id, (draft) => {
+            draft.status = "acknowledged";
+          }),
+        );
+        try {
+          await queryFulfilled;
+        } catch {
+          patch.undo(); // server rejected -> reconcile the UI back to truth
+        }
+      },
+      invalidatesTags: (_r, _e, id) => ["Alert", { type: "Alert", id }],
+    }),
+    dismiss: build.mutation<Alert, number>({
+      query: (id) => ({ url: `/alerts/${id}/dismiss`, method: "POST" }),
+      invalidatesTags: (_r, _e, id) => ["Alert", { type: "Alert", id }],
+    }),
+    reopen: build.mutation<Alert, number>({
+      query: (id) => ({ url: `/alerts/${id}/reopen`, method: "POST" }),
       invalidatesTags: (_r, _e, id) => ["Alert", { type: "Alert", id }],
     }),
     assign: build.mutation<Alert, AssignPayload>({
@@ -82,4 +103,6 @@ export const {
   useAssignMutation,
   useResolveMutation,
   useAddNoteMutation,
+  useDismissMutation,
+  useReopenMutation,
 } = knaqApi;
