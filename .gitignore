@@ -1,0 +1,14 @@
+# Python
+api/.venv/
+api/knaq.db
+__pycache__/
+*.pyc
+
+# Node / Next
+web/node_modules/
+web/.next/
+web/.env.local
+web/next-env.d.ts
+
+# OS
+.DS_Store
