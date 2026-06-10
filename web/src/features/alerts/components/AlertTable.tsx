@@ -4,6 +4,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import PersonAddIcon from "@mui/icons-material/PersonAddAlt1";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Box from "@mui/material/Box";
+import Checkbox from "@mui/material/Checkbox";
 import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -26,16 +27,30 @@ import { useAlertActions } from "../hooks/useAlertActions";
 interface Props {
   alerts: Alert[];
   onAssign: (alert: Alert) => void;
+  selectedIds: number[];
+  onToggle: (id: number) => void;
+  onToggleAll: () => void;
 }
 
-export default function AlertTable({ alerts, onAssign }: Props) {
+export default function AlertTable({ alerts, onAssign, selectedIds, onToggle, onToggleAll }: Props) {
   const { onAcknowledge, busy } = useAlertActions();
+  const selected = new Set(selectedIds);
+  const allSelected = alerts.length > 0 && alerts.every((a) => selected.has(a.id));
+  const someSelected = selectedIds.length > 0 && !allSelected;
 
   return (
     <TableContainer component={Paper} variant="outlined">
       <Table>
         <TableHead>
           <TableRow>
+            <TableCell padding="checkbox">
+              <Checkbox
+                checked={allSelected}
+                indeterminate={someSelected}
+                onChange={onToggleAll}
+                inputProps={{ "aria-label": "select all alerts" }}
+              />
+            </TableCell>
             <TableCell>Severity</TableCell>
             <TableCell>Alert</TableCell>
             <TableCell>Device</TableCell>
@@ -47,7 +62,14 @@ export default function AlertTable({ alerts, onAssign }: Props) {
         </TableHead>
         <TableBody>
           {alerts.map((a) => (
-            <TableRow key={a.id} hover>
+            <TableRow key={a.id} hover selected={selected.has(a.id)}>
+              <TableCell padding="checkbox">
+                <Checkbox
+                  checked={selected.has(a.id)}
+                  onChange={() => onToggle(a.id)}
+                  inputProps={{ "aria-label": `select alert ${a.id}` }}
+                />
+              </TableCell>
               <TableCell>
                 <SeverityChip severity={a.severity} />
               </TableCell>

@@ -1,0 +1,141 @@
+ ⨯ TypeError: Cannot read properties of undefined (reading 'call')
+    at Object.__webpack_require__ [as require] (D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\webpack-runtime.js:33:43)
+digest: "1619531201"
+TypeError: Cannot read properties of undefined (reading 'call')
+    at Object.__webpack_require__ [as require] (D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\webpack-runtime.js:33:43)
+    at require (D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:40:20064)
+    at D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:108376
+    at ea (D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:108583)
+    at D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:110813
+    at Object._fromJSON (D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:111370)
+    at JSON.parse (<anonymous>)
+    at ec (D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:109078)
+    at eo (D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:108123)
+    at D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:115291
+    at D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:115308
+    at D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:115341
+    at D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:115358
+    at t (D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:115581)
+ ⨯ TypeError: Cannot read properties of undefined (reading 'call')
+    at Object.__webpack_require__ [as require] (D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\webpack-runtime.js:33:43)
+    at require (D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:40:20064)
+    at D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:108376
+    at ea (D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:108583)
+    at D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:110813
+    at Object._fromJSON (D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:111370)
+    at JSON.parse (<anonymous>)
+    at ec (D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:109078)
+    at eo (D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:108123)
+    at D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:115291
+    at D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:115308
+    at D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:115341
+    at D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:115358
+    at t (D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:115581) {
+  page: '/alerts'
+}
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat 'D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\vendor-chunks\clsx.js'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/clsx' in D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server for build dependencies doesn't lead to expected result 'D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\vendor-chunks\clsx.js', but to 'Error: Can't resolve './vendor-chunks/clsx' in 'D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/clsx (expected D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\vendor-chunks\clsx.js)
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\webpack-runtime.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\webpack-runtime.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\app\analytics\page.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\app\analytics\page.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\server\require.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\server\require.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\server\load-components.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\utils.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\utils.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at resolve commonjs D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/redux-thunk' in D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server for build dependencies doesn't lead to expected result 'D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\vendor-chunks\redux-thunk.js', but to 'Error: Can't resolve './vendor-chunks/redux-thunk' in 'D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/redux-thunk (expected D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\vendor-chunks\redux-thunk.js)
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\webpack-runtime.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\webpack-runtime.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\app\analytics\page.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\app\analytics\page.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\server\require.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\server\require.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\server\load-components.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\utils.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\utils.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at resolve commonjs D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/@standard-schema' in D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server for build dependencies doesn't lead to expected result 'D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\vendor-chunks\@standard-schema.js', but to 'Error: Can't resolve './vendor-chunks/@standard-schema' in 'D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/@standard-schema (expected D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\vendor-chunks\@standard-schema.js)
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\webpack-runtime.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\webpack-runtime.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\app\analytics\page.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\app\analytics\page.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\server\require.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\server\require.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\server\load-components.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\utils.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\utils.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at resolve commonjs D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/object-assign' in D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server for build dependencies doesn't lead to expected result 'D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\vendor-chunks\object-assign.js', but to 'Error: Can't resolve './vendor-chunks/object-assign' in 'D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/object-assign (expected D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\vendor-chunks\object-assign.js)
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\webpack-runtime.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\webpack-runtime.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\app\analytics\page.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\app\analytics\page.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\server\require.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\server\require.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\server\load-components.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\utils.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\utils.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at resolve commonjs D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/@babel' in D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server for build dependencies doesn't lead to expected result 'D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\vendor-chunks\@babel.js', but to 'Error: Can't resolve './vendor-chunks/@babel' in 'D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/@babel (expected D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\vendor-chunks\@babel.js)
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\webpack-runtime.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\webpack-runtime.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\app\analytics\page.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\app\analytics\page.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\server\require.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\server\require.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\server\load-components.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\utils.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\utils.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at resolve commonjs D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/use-sync-external-store' in D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server for build dependencies doesn't lead to expected result 'D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\vendor-chunks\use-sync-external-store.js', but to 'Error: Can't resolve './vendor-chunks/use-sync-external-store' in 'D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/use-sync-external-store (expected D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\vendor-chunks\use-sync-external-store.js)
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\webpack-runtime.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\webpack-runtime.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\app\analytics\page.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\app\analytics\page.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\server\require.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\server\require.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\server\load-components.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\utils.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\utils.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at resolve commonjs D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/react-is' in D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server for build dependencies doesn't lead to expected result 'D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\vendor-chunks\react-is.js', but to 'Error: Can't resolve './vendor-chunks/react-is' in 'D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/react-is (expected D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\vendor-chunks\react-is.js)
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\webpack-runtime.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\webpack-runtime.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\app\analytics\page.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\.next\server\app\analytics\page.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\server\require.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\server\require.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\server\load-components.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\utils.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\utils.js
+<w>  at file dependencies D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at file D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at resolve commonjs D:\STUFF\Projects\full-stack-take-home-assignment\code\web\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js

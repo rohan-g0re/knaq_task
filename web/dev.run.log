@@ -1,0 +1,21 @@
+
+> knaq-web@1.0.0 dev
+> next dev
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 6.5s
+ ○ Compiling /alerts ...
+ ✓ Compiled /alerts in 10.2s (1783 modules)
+ GET /alerts 200 in 11094ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1602ms (1607 modules)
+ GET / 307 in 2366ms
+ ✓ Compiled /alerts in 468ms (899 modules)
+ GET /alerts 200 in 1053ms
+ ○ Compiling /analytics ...
+ ✓ Compiled /analytics in 10.3s (2957 modules)
+[?25h

@@ -58,6 +58,26 @@ export type CountsByStatus = Record<AlertStatus, number>;
 export interface AlertListResponse {
   data: Alert[];
   counts_by_status: CountsByStatus;
+  page: number;
+  page_size: number;
+  total: number;
+}
+
+export interface BulkResult {
+  id: number;
+  ok: boolean;
+  status?: AlertStatus;
+  error?: string;
+}
+
+export interface BulkResponse {
+  results: BulkResult[];
+}
+
+export interface BulkAssignPayload {
+  ids: number[];
+  assignee_id: number;
+  note?: string;
 }
 
 export interface Device {
@@ -86,6 +106,25 @@ export interface AlertFilters {
   deviceId: string | null;
   assignedTo: number | null;
   q: string;
+}
+
+// Mirrors GET /alerts/stats — the analytics dashboard contract.
+export interface VolumePoint {
+  date: string;
+  critical: number;
+  warning: number;
+  info: number;
+}
+
+export interface Stats {
+  statusCounts: CountsByStatus;
+  openBySeverity: Record<Severity, number>;
+  mttrMinutes: number | null;
+  resolvedThisWeek: number;
+  resolvedLastWeek: number;
+  dismissalRate: number;
+  resolutionBySeverity: Record<Severity, number | null>;
+  volumeTrend: VolumePoint[];
 }
 
 export interface AssignPayload {

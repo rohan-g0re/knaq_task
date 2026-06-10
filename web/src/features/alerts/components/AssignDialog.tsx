@@ -15,7 +15,8 @@ import { useState } from "react";
 
 import type { Alert } from "../types";
 import { initials } from "./AssigneeCell";
-import { useAssignMutation, useListUsersQuery } from "../api/knaqApi";
+import { useAssignMutation, useBulkAssignMutation, useListUsersQuery } from "../api/knaqApi";
+import { summarizeBulk } from "../bulkSummary";
 import { apiErrorMessage } from "@/lib/apiError";
 import { useToast } from "@/lib/toast/ToastProvider";
 
@@ -23,16 +24,19 @@ interface Props {
   alert: Alert | null;
   open: boolean;
   onClose: () => void;
+  bulkIds?: number[]; // when set, assigns all these alerts at once
 }
 
-export default function AssignDialog({ alert, open, onClose }: Props) {
+export default function AssignDialog({ alert, open, onClose, bulkIds }: Props) {
   const { data } = useListUsersQuery();
   const [assign, { isLoading }] = useAssignMutation();
+  const [bulkAssign, { isLoading: bulkLoading }] = useBulkAssignMutation();
   const { showSuccess, showError } = useToast();
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<number | null>(null);
   const [note, setNote] = useState("");
 
+  const isBulk = (bulkIds?.length ?? 0) > 0;
   const users = (data?.data ?? []).filter((u) =>
     `${u.name} ${u.role}`.toLowerCase().includes(search.toLowerCase()),
   );
@@ -46,10 +50,17 @@ export default function AssignDialog({ alert, open, onClose }: Props) {
   };
 
   const handleAssign = async () => {
-    if (!alert || currentId == null) return;
+    if (currentId == null) return;
+    const trimmedNote = note.trim() || undefined;
     try {
-      await assign({ id: alert.id, assignee_id: currentId, note: note.trim() || undefined }).unwrap();
-      showSuccess("Alert assigned.");
+      if (isBulk) {
+        const res = await bulkAssign({ ids: bulkIds!, assignee_id: currentId, note: trimmedNote }).unwrap();
+        const { message, allOk } = summarizeBulk(res, "assigned");
+        allOk ? showSuccess(message) : showError(message);
+      } else if (alert) {
+        await assign({ id: alert.id, assignee_id: currentId, note: trimmedNote }).unwrap();
+        showSuccess("Alert assigned.");
+      }
       handleClose();
     } catch (err) {
       showError(apiErrorMessage(err));
@@ -58,7 +69,7 @@ export default function AssignDialog({ alert, open, onClose }: Props) {
 
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xs">
-      <DialogTitle>Assign alert</DialogTitle>
+      <DialogTitle>{isBulk ? `Assign ${bulkIds!.length} alerts` : "Assign alert"}</DialogTitle>
       <DialogContent dividers>
         <TextField
           fullWidth
@@ -98,7 +109,7 @@ export default function AssignDialog({ alert, open, onClose }: Props) {
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
-        <Button variant="contained" disabled={currentId == null || isLoading} onClick={handleAssign}>
+        <Button variant="contained" disabled={currentId == null || isLoading || bulkLoading} onClick={handleAssign}>
           Assign
         </Button>
       </DialogActions>

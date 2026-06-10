@@ -1,0 +1,31 @@
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 3s
+ ○ Compiling /alerts ...
+ ✓ Compiled /alerts in 8.6s (1759 modules)
+ GET /alerts 200 in 9219ms
+ GET /alerts 200 in 64ms
+ ○ Compiling /alerts/[id] ...
+ ✓ Compiled /alerts/[id] in 3.2s (2002 modules)
+ GET /alerts/2 200 in 4276ms
+ ✓ Compiled in 2s (2002 modules)
+ ✓ Compiled in 657ms (2002 modules)
+ ✓ Compiled in 738ms (2002 modules)
+ ✓ Compiled in 524ms (2002 modules)
+ ✓ Compiled in 527ms (2002 modules)
+ ✓ Compiled in 1182ms (1026 modules)
+ ✓ Compiled in 500ms (1038 modules)
+ ✓ Compiled in 2.2s (2014 modules)
+ ✓ Compiled in 2.1s (2014 modules)
+ ○ Compiling /alerts ...
+ ✓ Compiled /alerts in 1948ms (1039 modules)
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 3.5s (2304 modules)
+ GET /alerts 500 in 6240ms
+ ○ Compiling /analytics ...
+ ✓ Compiled /analytics in 8.1s (3461 modules)
+ GET /analytics 200 in 8888ms
+[?25h

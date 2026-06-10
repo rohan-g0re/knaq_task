@@ -2,14 +2,19 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 import type {
   Alert,
-  AlertFilters,
   AlertListResponse,
   AssignPayload,
+  BulkAssignPayload,
+  BulkResponse,
   Device,
   NotePayload,
   ResolvePayload,
+  Stats,
   TeamUser,
 } from "../types";
+import type { FiltersState } from "../slices/filtersSlice";
+
+export const PAGE_SIZE = 10;
 
 const baseQuery = fetchBaseQuery({
   baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000",
@@ -20,15 +25,18 @@ const baseQuery = fetchBaseQuery({
   },
 });
 
-function buildAlertQuery(filters: AlertFilters): string {
+function buildAlertQuery(filters: FiltersState): string {
   const params = new URLSearchParams();
   filters.severity.forEach((s) => params.append("severity", s));
   filters.status.forEach((s) => params.append("status", s));
   if (filters.deviceId) params.set("device_id", filters.deviceId);
   if (filters.assignedTo != null) params.set("assigned_to", String(filters.assignedTo));
   if (filters.q.trim()) params.set("q", filters.q.trim());
-  const qs = params.toString();
-  return qs ? `/alerts?${qs}` : "/alerts";
+  // Server-side paging + sort: keeps paging consistent with filters/sort across the whole set.
+  params.set("sort", filters.sort);
+  params.set("page", String(filters.page));
+  params.set("page_size", String(PAGE_SIZE));
+  return `/alerts?${params.toString()}`;
 }
 
 export const knaqApi = createApi({
@@ -36,9 +44,13 @@ export const knaqApi = createApi({
   baseQuery,
   tagTypes: ["Alert", "Device", "User"],
   endpoints: (build) => ({
-    listAlerts: build.query<AlertListResponse, AlertFilters>({
+    listAlerts: build.query<AlertListResponse, FiltersState>({
       query: buildAlertQuery,
       providesTags: ["Alert"],
+    }),
+    getStats: build.query<Stats, void>({
+      query: () => "/alerts/stats",
+      providesTags: ["Alert"], // refreshes after any alert mutation (acknowledge/resolve/dismiss)
     }),
     getAlert: build.query<Alert, number>({
       query: (id) => `/alerts/${id}`,
@@ -91,11 +103,22 @@ export const knaqApi = createApi({
       query: ({ id, note }) => ({ url: `/alerts/${id}/notes`, method: "POST", body: { note } }),
       invalidatesTags: (_r, _e, { id }) => ["Alert", { type: "Alert", id }],
     }),
+
+    // Bulk: one request, server applies per-id and returns per-id outcomes (some may 409/404).
+    bulkAcknowledge: build.mutation<BulkResponse, number[]>({
+      query: (ids) => ({ url: "/alerts/bulk/acknowledge", method: "POST", body: { ids } }),
+      invalidatesTags: ["Alert"],
+    }),
+    bulkAssign: build.mutation<BulkResponse, BulkAssignPayload>({
+      query: (body) => ({ url: "/alerts/bulk/assign", method: "POST", body }),
+      invalidatesTags: ["Alert"],
+    }),
   }),
 });
 
 export const {
   useListAlertsQuery,
+  useGetStatsQuery,
   useGetAlertQuery,
   useListDevicesQuery,
   useListUsersQuery,
@@ -105,4 +128,6 @@ export const {
   useAddNoteMutation,
   useDismissMutation,
   useReopenMutation,
+  useBulkAcknowledgeMutation,
+  useBulkAssignMutation,
 } = knaqApi;
