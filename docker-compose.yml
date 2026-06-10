@@ -1,0 +1,32 @@
+# One command — `docker compose up --build` — brings up the API + web from a fresh clone.
+# Storage is SQLite on a named volume (no separate db service): the API seeds + ingests the
+# provided JSON on first boot.
+services:
+  api:
+    build: ./api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      DATA_DIR: /data
+      DB_URL: sqlite:////app/db/knaq.db
+      WEB_ORIGIN: http://localhost:3000
+    volumes:
+      - ./data:/data:ro     # provided devices.json + sensor_messages.json (read-only)
+      - api-db:/app/db      # persists the SQLite file across restarts
+
+  web:
+    restart: unless-stopped
+    build:
+      context: ./web
+      args:
+        # Baked into the client bundle at build time (browser -> host-published API port).
+        NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
+        NEXT_PUBLIC_API_TOKEN: brookfield-alice-token
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+
+volumes:
+  api-db:

@@ -12,3 +12,8 @@ web/next-env.d.ts
 
 # OS
 .DS_Store
+
+.env.local
+.env
+
+.claude/

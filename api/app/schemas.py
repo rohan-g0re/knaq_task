@@ -26,6 +26,15 @@ class NoteBody(BaseModel):
     note: str = Field(min_length=1)
 
 
+class BulkIds(BaseModel):
+    ids: list[int] = Field(min_length=1)
+
+
+class BulkAssignBody(BulkIds):
+    assignee_id: int
+    note: Optional[str] = None
+
+
 # ---- serializers (DB row -> camelCase JSON for the frontend contract) -----
 def user_brief(u: Optional[User]):
     return {"id": u.id, "name": u.name, "role": u.role} if u else None
@@ -98,4 +107,5 @@ def serialize_reading(r: Reading, tzname: str):
         "thresholdValue": r.threshold_value,
         "unexpectedType": r.unexpected_type,
         "suspect": r.suspect,
+        "anomaly": r.anomaly,
     }

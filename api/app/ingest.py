@@ -1,7 +1,9 @@
 import json
 import logging
+from collections import defaultdict, deque
 from datetime import datetime
 
+from sqlalchemy import select
 from sqlalchemy.dialects.sqlite import insert as sqlite_insert
 from sqlalchemy.orm import Session
 
@@ -121,5 +123,35 @@ def run_ingest(db: Session) -> dict:
             counts["recoveries"] += 1
 
     db.commit()
+    counts["anomalies"] = flag_anomalies(db)
     log.info("ingest done: %s", counts)
     return counts
+
+
+# Z=2.5: this synthetic data is wide/noisy (observed max z ~2.87), so the classic 3-sigma
+# cutoff flags nothing. 2.5 sigma is a standard outlier threshold and surfaces the genuinely
+# most-deviant in-range readings (~0.25% here) without becoming noise.
+WINDOW, MIN_HISTORY, Z = 20, 10, 2.5
+
+
+def flag_anomalies(db: Session) -> int:
+    """In-range readings that deviate >3 sigma from the last 20 of the same device+input.
+    Distinct from `breached` (that's crossing a fixed threshold; this is 'unusual for this machine')."""
+    rows = db.scalars(
+        select(Reading)
+        .where(Reading.input_name.in_(CHECKED_INPUTS), Reading.unexpected_type.is_(False))
+        .order_by(Reading.ts_utc)
+    ).all()
+    windows: dict = defaultdict(lambda: deque(maxlen=WINDOW))
+    flagged = 0
+    for r in rows:
+        w = windows[(r.device_id, r.input_name)]
+        if not r.breached and len(w) >= MIN_HISTORY:
+            mean = sum(w) / len(w)
+            std = (sum((x - mean) ** 2 for x in w) / len(w)) ** 0.5
+            if std > 0 and abs(r.input_value - mean) > Z * std:
+                r.anomaly = True
+                flagged += 1
+        w.append(r.input_value)
+    db.commit()
+    return flagged

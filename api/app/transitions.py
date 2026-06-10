@@ -1,9 +1,11 @@
 from fastapi import HTTPException
 
-# Required-scope paths only. dismiss/reopen slot in here later without touching callers.
 TRANSITIONS = {
     "acknowledge": {"new": "acknowledged"},
     "resolve": {"acknowledged": "resolved"},
+    # bonus paths:
+    "dismiss": {"new": "dismissed", "acknowledged": "dismissed"},
+    "reopen": {"resolved": "acknowledged", "dismissed": "acknowledged"},
 }
 TERMINAL = {"resolved", "dismissed"}
 

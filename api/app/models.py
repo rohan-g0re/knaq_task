@@ -42,6 +42,7 @@ class Reading(Base):
     threshold_value = Column(Float, nullable=True)
     unexpected_type = Column(Boolean, default=False)   # not in device.reading_types
     suspect = Column(Boolean, default=False)           # physically implausible (e.g. negative current)
+    anomaly = Column(Boolean, default=False)           # in-range but unusual vs recent history (z-score)
     __table_args__ = (
         UniqueConstraint("device_id", "ts_utc", "input_name", "input_value", name="uq_reading"),
         Index("ix_readings_device_ts", "device_id", "ts_utc"),

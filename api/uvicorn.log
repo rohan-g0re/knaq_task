@@ -1,0 +1,22 @@
+INFO:     Started server process [38604]
+INFO:     Waiting for application startup.
+INFO:knaq:DB already populated -> skipping seed/ingest
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:64388 - "GET /devices/ESC-001/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64390 - "GET /devices/CMP-003/stats HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64392 - "GET /devices/CMP-003/stats HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64394 - "GET /devices/CMP-003/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64396 - "GET /devices/ESC-001/stats HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63687 - "GET /alerts/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63689 - "GET /alerts?page=1&page_size=10&sort=severity HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53704 - "GET /alerts?page=1&page_size=1&sort=severity HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53706 - "POST /alerts/2/acknowledge HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53708 - "POST /alerts/2/resolve HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53711 - "GET /alerts/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59011 - "OPTIONS /alerts/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59011 - "GET /alerts/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64475 - "OPTIONS /alerts/2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64475 - "GET /alerts/2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64475 - "OPTIONS /users HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64475 - "GET /users HTTP/1.1" 200 OK

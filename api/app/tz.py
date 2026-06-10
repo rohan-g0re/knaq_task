@@ -25,3 +25,12 @@ def utc_to_local_iso(dt: datetime, tzname: str) -> str:
 def utc_iso(dt: datetime | None) -> str | None:
     """Naive UTC datetime -> ISO-8601 Zulu string."""
     return dt.replace(tzinfo=UTC).isoformat() if dt else None
+
+
+def utc_to_local_date(dt: datetime, tzname: str) -> str:
+    """Naive UTC datetime -> local calendar day (YYYY-MM-DD) in the device's tz.
+
+    A reading at 23:00 local lands on the local day, not the UTC day — keeps day
+    buckets honest for tz-aware stats.
+    """
+    return dt.replace(tzinfo=UTC).astimezone(ZoneInfo(tzname)).date().isoformat()
