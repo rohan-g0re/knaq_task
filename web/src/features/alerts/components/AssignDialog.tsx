@@ -1,115 +1,109 @@
 "use client";
 
 import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import List from "@mui/material/List";
-import ListItemButton from "@mui/material/ListItemButton";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
+import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 import { useState } from "react";
 
-import type { Alert } from "../types";
-import { initials } from "./AssigneeCell";
-import { useAssignMutation, useBulkAssignMutation, useListUsersQuery } from "../api/knaqApi";
-import { summarizeBulk } from "../bulkSummary";
 import { apiErrorMessage } from "@/lib/apiError";
 import { useToast } from "@/lib/toast/ToastProvider";
+import { useAssignMutation, useBulkAssignMutation, useListUsersQuery } from "../api/knaqApi";
 
-interface Props {
-  alert: Alert | null;
-  open: boolean;
-  onClose: () => void;
-  bulkIds?: number[]; // when set, assigns all these alerts at once
+function initials(name: string) {
+  return name.split(" ").map((n) => n[0]).join("").toUpperCase();
 }
 
-export default function AssignDialog({ alert, open, onClose, bulkIds }: Props) {
+interface Props {
+  ids: number[];
+  onClose: () => void;
+}
+
+export default function AssignDialog({ ids, onClose }: Props) {
   const { data } = useListUsersQuery();
-  const [assign, { isLoading }] = useAssignMutation();
-  const [bulkAssign, { isLoading: bulkLoading }] = useBulkAssignMutation();
-  const { showSuccess, showError } = useToast();
-  const [search, setSearch] = useState("");
-  const [selected, setSelected] = useState<number | null>(null);
+  const [assign] = useAssignMutation();
+  const [bulkAssign] = useBulkAssignMutation();
+  const { toast } = useToast();
+
+  const [selectedId, setSelectedId] = useState<number | null>(null);
   const [note, setNote] = useState("");
+  const [search, setSearch] = useState("");
 
-  const isBulk = (bulkIds?.length ?? 0) > 0;
-  const users = (data?.data ?? []).filter((u) =>
-    `${u.name} ${u.role}`.toLowerCase().includes(search.toLowerCase()),
+  const users = (data?.data ?? []).filter(
+    (u) =>
+      u.name.toLowerCase().includes(search.toLowerCase()) ||
+      (u.role ?? "").toLowerCase().includes(search.toLowerCase())
   );
-  const currentId = selected ?? alert?.assignedTo?.id ?? null;
 
-  const handleClose = () => {
-    setSearch("");
-    setSelected(null);
-    setNote("");
-    onClose();
-  };
-
-  const handleAssign = async () => {
-    if (currentId == null) return;
-    const trimmedNote = note.trim() || undefined;
+  async function handleSubmit() {
+    if (!selectedId) return;
     try {
-      if (isBulk) {
-        const res = await bulkAssign({ ids: bulkIds!, assignee_id: currentId, note: trimmedNote }).unwrap();
-        const { message, allOk } = summarizeBulk(res, "assigned");
-        allOk ? showSuccess(message) : showError(message);
-      } else if (alert) {
-        await assign({ id: alert.id, assignee_id: currentId, note: trimmedNote }).unwrap();
-        showSuccess("Alert assigned.");
+      if (ids.length === 1) {
+        await assign({ id: ids[0], assigneeId: selectedId, note: note || undefined }).unwrap();
+      } else {
+        await bulkAssign({ ids, assigneeId: selectedId, note: note || undefined }).unwrap();
       }
-      handleClose();
-    } catch (err) {
-      showError(apiErrorMessage(err));
+      toast("Assigned successfully", "success");
+      onClose();
+    } catch (e) {
+      toast(apiErrorMessage(e), "error");
     }
-  };
+  }
 
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xs">
-      <DialogTitle>{isBulk ? `Assign ${bulkIds!.length} alerts` : "Assign alert"}</DialogTitle>
-      <DialogContent dividers>
+    <Dialog open onClose={onClose} maxWidth="xs" fullWidth>
+      <DialogTitle>Assign Alert{ids.length > 1 ? `s (${ids.length})` : ""}</DialogTitle>
+      <DialogContent>
         <TextField
           fullWidth
           size="small"
-          placeholder="Search team members…"
+          placeholder="Search by name or role…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           sx={{ mb: 1 }}
         />
-        <List dense>
+        <List dense disablePadding>
           {users.map((u) => (
             <ListItemButton
               key={u.id}
-              selected={currentId === u.id}
-              onClick={() => setSelected(u.id)}
+              selected={selectedId === u.id}
+              onClick={() => setSelectedId(u.id)}
             >
               <ListItemAvatar>
-                <Avatar sx={{ bgcolor: "secondary.main" }}>{initials(u.name)}</Avatar>
+                <Avatar sx={{ width: 32, height: 32, fontSize: 12, bgcolor: "secondary.main" }}>
+                  {initials(u.name)}
+                </Avatar>
               </ListItemAvatar>
-              <ListItemText
-                primary={u.name}
-                secondary={alert?.assignedTo?.id === u.id ? `${u.role} · current` : u.role}
-              />
+              <ListItemText primary={u.name} secondary={u.role} />
             </ListItemButton>
           ))}
+          {users.length === 0 && (
+            <Typography variant="body2" color="text.secondary" sx={{ p: 1 }}>
+              No users found.
+            </Typography>
+          )}
         </List>
         <TextField
           fullWidth
           size="small"
-          label="Reason for assignment (optional)"
-          multiline
-          minRows={2}
+          label="Reason (optional)"
           value={note}
           onChange={(e) => setNote(e.target.value)}
-          sx={{ mt: 1 }}
+          sx={{ mt: 2 }}
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
-        <Button variant="contained" disabled={currentId == null || isLoading || bulkLoading} onClick={handleAssign}>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button variant="contained" disabled={!selectedId} onClick={handleSubmit}>
           Assign
         </Button>
       </DialogActions>

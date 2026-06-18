@@ -1,1 +1,0 @@
-Why do we need run logs? Why do we need so many images? Do we need.envs, and where are they and what are their values? 

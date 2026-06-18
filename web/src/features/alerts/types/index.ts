@@ -1,13 +1,6 @@
-// Mirrors the backend serializers in api/app/schemas.py — this is the shared contract.
-
-export type AlertStatus = "new" | "acknowledged" | "resolved" | "dismissed";
 export type Severity = "critical" | "warning" | "info";
-export type ResolutionType =
-  | "fixed"
-  | "false_alarm"
-  | "known_issue"
-  | "deferred"
-  | "cannot_reproduce";
+export type AlertStatus = "new" | "acknowledged" | "resolved" | "dismissed";
+export type ResolutionType = "fixed" | "false_alarm" | "known_issue" | "deferred" | "cannot_reproduce";
 
 export interface UserBrief {
   id: number;
@@ -15,23 +8,23 @@ export interface UserBrief {
   role: string;
 }
 
-export interface TimelineEntry {
+export interface AlertResolution {
+  type: ResolutionType;
+  rootCause: string;
+  actionTaken: string;
+  preventiveMeasures?: string;
+  timeSpentMinutes?: number;
+}
+
+export interface TimelineEvent {
   timestamp: string;
   action: string;
-  user: string | null;
-  details: string | null;
-  note: string | null;
+  user: string;
+  details?: string;
+  note?: string;
 }
 
-export interface Resolution {
-  type: ResolutionType;
-  rootCause: string | null;
-  actionTaken: string | null;
-  preventiveMeasures: string | null;
-  timeSpentMinutes: number | null;
-}
-
-export interface Alert {
+export interface KnaqAlert {
   id: number;
   deviceId: string;
   deviceName: string;
@@ -41,43 +34,24 @@ export interface Alert {
   alertType: string;
   severity: Severity;
   title: string;
-  threshold: number | null;
-  readingValue: number | null;
-  readingName: string | null;
+  threshold?: number;
+  readingValue?: number;
+  readingName?: string;
   ts: string;
   status: AlertStatus;
-  assignedTo: UserBrief | null;
-  acknowledgedAt: string | null;
-  resolvedAt: string | null;
-  resolution: Resolution | null;
-  timeline?: TimelineEntry[];
+  assignedTo?: UserBrief;
+  acknowledgedAt?: string;
+  resolvedAt?: string;
+  resolution?: AlertResolution;
+  timeline?: TimelineEvent[];
 }
 
-export type CountsByStatus = Record<AlertStatus, number>;
-
-export interface AlertListResponse {
-  data: Alert[];
-  counts_by_status: CountsByStatus;
+export interface AlertsResponse {
+  data: KnaqAlert[];
+  counts_by_status: Record<AlertStatus, number>;
   page: number;
   page_size: number;
   total: number;
-}
-
-export interface BulkResult {
-  id: number;
-  ok: boolean;
-  status?: AlertStatus;
-  error?: string;
-}
-
-export interface BulkResponse {
-  results: BulkResult[];
-}
-
-export interface BulkAssignPayload {
-  ids: number[];
-  assignee_id: number;
-  note?: string;
 }
 
 export interface Device {
@@ -87,62 +61,34 @@ export interface Device {
   name: string;
   location: string;
   timezone: string;
-  floorCount: number | null;
-  installedDate: string;
-  readingTypes: string[];
-  alertThresholds: Record<string, number>;
+  floorCount?: number;
+  installedDate?: string;
+  readingTypes?: Record<string, unknown>;
+  alertThresholds?: Record<string, unknown>;
 }
 
-export interface TeamUser {
+export interface DevicesResponse {
+  data: Device[];
+}
+
+export interface KnaqUser {
   id: number;
   name: string;
   role: string;
-  company: string;
+  company?: string;
 }
 
-export interface AlertFilters {
-  severity: Severity[];
-  status: AlertStatus[];
-  deviceId: string | null;
-  assignedTo: number | null;
-  q: string;
+export interface UsersResponse {
+  data: KnaqUser[];
 }
 
-// Mirrors GET /alerts/stats — the analytics dashboard contract.
-export interface VolumePoint {
-  date: string;
-  critical: number;
-  warning: number;
-  info: number;
-}
-
-export interface Stats {
-  statusCounts: CountsByStatus;
+export interface AlertStats {
+  statusCounts: Record<AlertStatus, number>;
   openBySeverity: Record<Severity, number>;
-  mttrMinutes: number | null;
+  mttrMinutes?: number;
   resolvedThisWeek: number;
   resolvedLastWeek: number;
   dismissalRate: number;
   resolutionBySeverity: Record<Severity, number | null>;
-  volumeTrend: VolumePoint[];
-}
-
-export interface AssignPayload {
-  id: number;
-  assignee_id: number;
-  note?: string;
-}
-
-export interface ResolvePayload {
-  id: number;
-  resolution_type: ResolutionType;
-  root_cause: string;
-  action_taken: string;
-  preventive_measures?: string;
-  time_spent_minutes?: number;
-}
-
-export interface NotePayload {
-  id: number;
-  note: string;
+  volumeTrend: Array<{ date: string; critical: number; warning: number; info: number }>;
 }

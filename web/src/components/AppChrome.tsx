@@ -14,6 +14,7 @@ import Typography from "@mui/material/Typography";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import UserSwitcher from "@/features/session/UserSwitcher";
 import { useColorMode } from "@/lib/theme/ColorModeProvider";
 
 const NAV = [
@@ -62,11 +63,7 @@ export default function AppChrome({ children }: { children: React.ReactNode }) {
               );
             })}
           </Box>
-          <Tooltip title="Signed in as Alice Chen · Brookfield Properties">
-            <Typography variant="body2" sx={{ color: "text.secondary", mr: 1 }}>
-              Alice Chen
-            </Typography>
-          </Tooltip>
+          <UserSwitcher />
           <Tooltip title={mode === "light" ? "Switch to dark mode" : "Switch to light mode"}>
             <IconButton onClick={toggle} color="inherit" aria-label="toggle color mode">
               {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}

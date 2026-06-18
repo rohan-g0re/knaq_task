@@ -5,18 +5,20 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
+import FormControl from "@mui/material/FormControl";
+import FormHelperText from "@mui/material/FormHelperText";
+import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
-import Stack from "@mui/material/Stack";
+import Select from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
-import type { ResolutionType } from "../types";
-import { useResolveMutation } from "../api/knaqApi";
 import { apiErrorMessage } from "@/lib/apiError";
 import { useToast } from "@/lib/toast/ToastProvider";
+import { useResolveMutation } from "../api/knaqApi";
 
-const RESOLUTION_TYPES: { value: ResolutionType; label: string }[] = [
+const RESOLUTION_TYPES = [
   { value: "fixed", label: "Fixed" },
   { value: "false_alarm", label: "False Alarm" },
   { value: "known_issue", label: "Known Issue" },
@@ -25,82 +27,131 @@ const RESOLUTION_TYPES: { value: ResolutionType; label: string }[] = [
 ];
 
 const schema = Yup.object({
-  resolution_type: Yup.string().required("Resolution type is required"),
-  root_cause: Yup.string().trim().required("Root cause is required"),
-  action_taken: Yup.string().trim().required("Action taken is required"),
+  resolution_type: Yup.string().required("Required"),
+  root_cause: Yup.string().min(1).required("Required"),
+  action_taken: Yup.string().min(1).required("Required"),
   preventive_measures: Yup.string(),
-  time_spent_minutes: Yup.number().min(0, "Must be ≥ 0").nullable(),
+  time_spent_minutes: Yup.number().min(0).nullable(),
 });
 
 interface Props {
   alertId: number;
-  open: boolean;
   onClose: () => void;
 }
 
-export default function ResolveDialog({ alertId, open, onClose }: Props) {
-  const [resolve, { isLoading }] = useResolveMutation();
-  const { showSuccess, showError } = useToast();
+export default function ResolveDialog({ alertId, onClose }: Props) {
+  const [resolve] = useResolveMutation();
+  const { toast } = useToast();
 
   const formik = useFormik({
     initialValues: {
-      resolution_type: "" as ResolutionType | "",
+      resolution_type: "",
       root_cause: "",
       action_taken: "",
       preventive_measures: "",
       time_spent_minutes: "",
     },
     validationSchema: schema,
-    onSubmit: async (values, { resetForm }) => {
+    onSubmit: async (values) => {
       try {
         await resolve({
           id: alertId,
-          resolution_type: values.resolution_type as ResolutionType,
-          root_cause: values.root_cause.trim(),
-          action_taken: values.action_taken.trim(),
-          preventive_measures: values.preventive_measures.trim() || undefined,
-          time_spent_minutes: values.time_spent_minutes ? Number(values.time_spent_minutes) : undefined,
+          body: {
+            ...values,
+            time_spent_minutes: values.time_spent_minutes ? Number(values.time_spent_minutes) : null,
+          },
         }).unwrap();
-        showSuccess("Alert resolved.");
-        resetForm();
+        toast("Alert resolved", "success");
         onClose();
-      } catch (err) {
-        showError(apiErrorMessage(err));
+      } catch (e) {
+        toast(apiErrorMessage(e), "error");
       }
     },
   });
 
-  const field = (name: keyof typeof formik.values) => ({
-    name,
-    value: formik.values[name],
-    onChange: formik.handleChange,
-    onBlur: formik.handleBlur,
-    error: formik.touched[name] && Boolean(formik.errors[name]),
-    helperText: formik.touched[name] ? (formik.errors[name] as string | undefined) : undefined,
-  });
-
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <form onSubmit={formik.handleSubmit} noValidate>
-        <DialogTitle>Resolve alert</DialogTitle>
-        <DialogContent dividers>
-          <Stack spacing={2} sx={{ mt: 0.5 }}>
-            <TextField select label="Resolution type" required {...field("resolution_type")}>
-              {RESOLUTION_TYPES.map((r) => (
-                <MenuItem key={r.value} value={r.value}>
-                  {r.label}
-                </MenuItem>
+    <Dialog open onClose={onClose} maxWidth="sm" fullWidth>
+      <DialogTitle>Resolve Alert</DialogTitle>
+      <form onSubmit={formik.handleSubmit}>
+        <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <FormControl
+            fullWidth
+            size="small"
+            error={formik.touched.resolution_type && Boolean(formik.errors.resolution_type)}
+          >
+            <InputLabel>Resolution type *</InputLabel>
+            <Select
+              name="resolution_type"
+              label="Resolution type *"
+              value={formik.values.resolution_type}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+            >
+              {RESOLUTION_TYPES.map((t) => (
+                <MenuItem key={t.value} value={t.value}>{t.label}</MenuItem>
               ))}
-            </TextField>
-            <TextField label="Root cause" required {...field("root_cause")} />
-            <TextField label="Action taken" required multiline minRows={2} {...field("action_taken")} />
-            <TextField label="Preventive measures" multiline minRows={2} {...field("preventive_measures")} />
-            <TextField label="Time spent (minutes)" type="number" {...field("time_spent_minutes")} />
-          </Stack>
+            </Select>
+            {formik.touched.resolution_type && formik.errors.resolution_type && (
+              <FormHelperText>{formik.errors.resolution_type}</FormHelperText>
+            )}
+          </FormControl>
+
+          <TextField
+            fullWidth
+            size="small"
+            name="root_cause"
+            label="Root cause *"
+            value={formik.values.root_cause}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.root_cause && Boolean(formik.errors.root_cause)}
+            helperText={formik.touched.root_cause && formik.errors.root_cause}
+          />
+
+          <TextField
+            fullWidth
+            size="small"
+            multiline
+            rows={3}
+            name="action_taken"
+            label="Action taken *"
+            value={formik.values.action_taken}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.action_taken && Boolean(formik.errors.action_taken)}
+            helperText={formik.touched.action_taken && formik.errors.action_taken}
+          />
+
+          <TextField
+            fullWidth
+            size="small"
+            name="preventive_measures"
+            label="Preventive measures (optional)"
+            value={formik.values.preventive_measures}
+            onChange={formik.handleChange}
+          />
+
+          <TextField
+            fullWidth
+            size="small"
+            type="number"
+            name="time_spent_minutes"
+            label="Time spent (minutes, optional)"
+            value={formik.values.time_spent_minutes}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            inputProps={{ min: 0 }}
+            error={formik.touched.time_spent_minutes && Boolean(formik.errors.time_spent_minutes)}
+            helperText={formik.touched.time_spent_minutes && formik.errors.time_spent_minutes}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose}>Cancel</Button>
-          <Button type="submit" variant="contained" disabled={!formik.isValid || !formik.dirty || isLoading}>
+          <Button
+            type="submit"
+            variant="contained"
+            disabled={!formik.isValid || !formik.dirty || formik.isSubmitting}
+          >
             Resolve
           </Button>
         </DialogActions>

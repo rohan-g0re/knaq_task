@@ -2,51 +2,37 @@
 
 import Alert from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useState } from "react";
 
-type Severity = "success" | "error" | "info";
-interface Toast {
-  message: string;
-  severity: Severity;
-}
+type Severity = "success" | "error" | "info" | "warning";
+interface ToastCtx { toast: (message: string, severity?: Severity) => void; }
 
-interface ToastContextValue {
-  showSuccess: (message: string) => void;
-  showError: (message: string) => void;
-}
-
-const ToastContext = createContext<ToastContextValue>({
-  showSuccess: () => {},
-  showError: () => {},
-});
-
-export const useToast = () => useContext(ToastContext);
+const ToastContext = createContext<ToastCtx>({ toast: () => {} });
+export function useToast() { return useContext(ToastContext); }
 
 export default function ToastProvider({ children }: { children: React.ReactNode }) {
-  const [toast, setToast] = useState<Toast | null>(null);
+  const [open, setOpen] = useState(false);
+  const [msg, setMsg] = useState("");
+  const [sev, setSev] = useState<Severity>("info");
 
-  const ctx = useMemo<ToastContextValue>(
-    () => ({
-      showSuccess: (message) => setToast({ message, severity: "success" }),
-      showError: (message) => setToast({ message, severity: "error" }),
-    }),
-    [],
-  );
+  const toast = useCallback((message: string, severity: Severity = "info") => {
+    setMsg(message);
+    setSev(severity);
+    setOpen(true);
+  }, []);
 
   return (
-    <ToastContext.Provider value={ctx}>
+    <ToastContext.Provider value={{ toast }}>
       {children}
       <Snackbar
-        open={toast !== null}
-        autoHideDuration={5000}
-        onClose={() => setToast(null)}
+        open={open}
+        autoHideDuration={4000}
+        onClose={() => setOpen(false)}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
-        {toast ? (
-          <Alert severity={toast.severity} variant="filled" onClose={() => setToast(null)}>
-            {toast.message}
-          </Alert>
-        ) : undefined}
+        <Alert severity={sev} onClose={() => setOpen(false)} variant="filled" sx={{ minWidth: 300 }}>
+          {msg}
+        </Alert>
       </Snackbar>
     </ToastContext.Provider>
   );

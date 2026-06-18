@@ -43,10 +43,12 @@ def run_ingest(db: Session) -> dict:
         if mtype not in VALID_TYPES:
             reject(m, f"invalid message_type: {mtype!r}")
             continue
+        
         ts_raw = m.get("timestamp")
         if not isinstance(ts_raw, (int, float)) or isinstance(ts_raw, bool):
             reject(m, f"missing or non-numeric timestamp: {ts_raw!r}")
             continue
+        
         device = devices.get(m.get("device_id"))
         if not device:
             reject(m, f"unknown or missing device_id: {m.get('device_id')!r}")

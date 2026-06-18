@@ -1,52 +1,46 @@
 "use client";
 
 import CssBaseline from "@mui/material/CssBaseline";
-import { ThemeProvider } from "@mui/material/styles";
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { createContext, useContext, useMemo, useState } from "react";
 
-import { buildTheme } from "./theme";
+type ColorMode = "light" | "dark";
+interface ColorModeCtx { mode: ColorMode; toggle: () => void; }
 
-type Mode = "light" | "dark";
+const ColorModeContext = createContext<ColorModeCtx>({ mode: "light", toggle: () => {} });
+export function useColorMode() { return useContext(ColorModeContext); }
 
-interface ColorModeContextValue {
-  mode: Mode;
-  toggle: () => void;
-}
+export const STATUS_COLORS: Record<string, string> = {
+  new: "#EFC01A",
+  acknowledged: "#ed6c02",
+  resolved: "#2e7d32",
+  dismissed: "#757575",
+};
 
-const ColorModeContext = createContext<ColorModeContextValue>({
-  mode: "light",
-  toggle: () => {},
-});
-
-export const useColorMode = () => useContext(ColorModeContext);
-
-const STORAGE_KEY = "knaq-color-mode";
+export const SEVERITY_COLORS: Record<string, string> = {
+  critical: "#d32f2f",
+  warning: "#ed6c02",
+  info: "#0288d1",
+};
 
 export default function ColorModeProvider({ children }: { children: React.ReactNode }) {
-  const [mode, setMode] = useState<Mode>("light");
+  const [mode, setMode] = useState<ColorMode>("light");
+  const toggle = () => setMode((m) => (m === "light" ? "dark" : "light"));
 
-  // Resolve initial mode after mount (localStorage > prefers-color-scheme).
-  useEffect(() => {
-    const stored = window.localStorage.getItem(STORAGE_KEY) as Mode | null;
-    if (stored === "light" || stored === "dark") {
-      setMode(stored);
-    } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      setMode("dark");
-    }
-  }, []);
-
-  const toggle = () =>
-    setMode((prev) => {
-      const next = prev === "light" ? "dark" : "light";
-      window.localStorage.setItem(STORAGE_KEY, next);
-      return next;
-    });
-
-  const theme = useMemo(() => buildTheme(mode), [mode]);
-  const ctx = useMemo(() => ({ mode, toggle }), [mode]);
+  const theme = useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode,
+          primary: { main: "#EFC01A" },
+          secondary: { main: "#4B8189" },
+        },
+      }),
+    [mode]
+  );
 
   return (
-    <ColorModeContext.Provider value={ctx}>
+    <ColorModeContext.Provider value={{ mode, toggle }}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         {children}

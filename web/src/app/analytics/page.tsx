@@ -1,243 +1,130 @@
 "use client";
 
-import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import RemoveIcon from "@mui/icons-material/Remove";
-import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import CircularProgress from "@mui/material/CircularProgress";
 import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import Skeleton from "@mui/material/Skeleton";
 import Typography from "@mui/material/Typography";
-import { useTheme } from "@mui/material/styles";
 import ReactECharts from "echarts-for-react";
+import { useTheme } from "@mui/material/styles";
 
+import { SEVERITY_COLORS, STATUS_COLORS } from "@/lib/theme/ColorModeProvider";
 import { useGetStatsQuery } from "@/features/alerts/api/knaqApi";
-import type { Severity, Stats } from "@/features/alerts/types";
-import { SEVERITY_COLORS, STATUS_COLORS } from "@/lib/theme/theme";
-import { apiErrorMessage } from "@/lib/apiError";
 
-// SLA resolution targets (minutes). Critical = 4h is the assignment's own example;
-// Warning = 24h is our stated assumption. Documented in SOLUTION.md.
-const SLA_TARGETS: Record<Severity, number | null> = { critical: 240, warning: 1440, info: null };
-
-const SEVERITIES: Severity[] = ["critical", "warning", "info"];
-
-// MTTR / resolution times are measured from human-logged time_spent_minutes (see SOLUTION.md),
-// so they're real minutes — render them as "Xh Ym" / "Ym".
-function fmtMinutes(min: number | null): string {
-  if (min == null) return "—";
-  if (min < 60) return `${Math.round(min)}m`;
-  const h = Math.floor(min / 60);
-  const m = Math.round(min % 60);
-  return m ? `${h}h ${m}m` : `${h}h`;
-}
-
-function Trend({ now, prev }: { now: number; prev: number }) {
-  const delta = now - prev;
-  const color = delta > 0 ? "success.main" : delta < 0 ? "error.main" : "text.secondary";
-  const Icon = delta > 0 ? ArrowUpwardIcon : delta < 0 ? ArrowDownwardIcon : RemoveIcon;
+function MetricCard({ label, value }: { label: string; value: string | number }) {
   return (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 0.25, color }}>
-      <Icon sx={{ fontSize: 16 }} />
-      <Typography variant="caption" sx={{ color }}>
-        {delta === 0 ? "no change" : `${Math.abs(delta)} vs last week`}
-      </Typography>
-    </Box>
+    <Card variant="outlined">
+      <CardContent>
+        <Typography variant="caption" color="text.secondary">{label}</Typography>
+        <Typography variant="h4" fontWeight={700}>{value}</Typography>
+      </CardContent>
+    </Card>
   );
 }
 
-function StatCard({ label, value, sub }: { label: string; value: string; sub?: React.ReactNode }) {
-  return (
-    <Paper variant="outlined" sx={{ p: 2, height: "100%" }}>
-      <Typography variant="overline" color="text.secondary">
-        {label}
-      </Typography>
-      <Typography variant="h4" sx={{ fontWeight: 700, lineHeight: 1.2 }}>
-        {value}
-      </Typography>
-      {sub && <Box sx={{ mt: 0.5 }}>{sub}</Box>}
-    </Paper>
-  );
-}
-
-function ChartCard({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <Paper variant="outlined" sx={{ p: 2, height: "100%" }}>
-      <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
-        {title}
-      </Typography>
-      {children}
-    </Paper>
-  );
-}
+const SLA: Record<string, number> = { critical: 240, warning: 1440 };
 
 export default function AnalyticsPage() {
+  const { data, isLoading } = useGetStatsQuery();
   const theme = useTheme();
-  const { data, isLoading, isError, error, refetch } = useGetStatsQuery();
-
-  const text = theme.palette.text.primary;
-  const muted = theme.palette.text.secondary;
-  const line = theme.palette.divider;
-  // Shared bits so every chart stays legible across light/dark theme.
-  const axis = {
-    axisLabel: { color: muted },
-    axisLine: { lineStyle: { color: line } },
-    splitLine: { lineStyle: { color: line } },
-  };
-  const tooltipBg = theme.palette.background.paper;
-
-  if (isError) {
-    return (
-      <Alert
-        severity="error"
-        action={
-          <Button color="inherit" size="small" onClick={() => refetch()}>
-            Retry
-          </Button>
-        }
-      >
-        {apiErrorMessage(error)}
-      </Alert>
-    );
-  }
 
   if (isLoading || !data) {
     return (
-      <Box>
-        <Typography variant="h5" sx={{ fontWeight: 700, mb: 2 }}>
-          Analytics
-        </Typography>
-        <Skeleton variant="rounded" height={120} sx={{ mb: 2 }} />
-        <Skeleton variant="rounded" height={360} />
+      <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
+        <CircularProgress />
       </Box>
     );
   }
 
-  const s: Stats = data;
-  const openTotal = SEVERITIES.reduce((sum, sev) => sum + (s.openBySeverity[sev] ?? 0), 0);
+  const open = data.openBySeverity;
+  const totalOpen = (open.critical ?? 0) + (open.warning ?? 0) + (open.info ?? 0);
+  const mttr = data.mttrMinutes != null ? `${data.mttrMinutes} min` : "—";
 
-  // --- Alerts by Status (donut) ---
-  const statusOption = {
-    tooltip: { trigger: "item", backgroundColor: tooltipBg, borderColor: line, textStyle: { color: text } },
-    legend: { bottom: 0, textStyle: { color: muted } },
-    series: [
-      {
-        type: "pie",
-        radius: ["45%", "70%"],
-        avoidLabelOverlap: false,
-        itemStyle: { borderColor: theme.palette.background.paper, borderWidth: 2 },
-        label: { color: text },
-        data: (Object.keys(s.statusCounts) as (keyof typeof s.statusCounts)[]).map((k) => ({
-          name: k,
-          value: s.statusCounts[k],
-          itemStyle: { color: STATUS_COLORS[k] },
-        })),
-      },
-    ],
+  const donutOption = {
+    tooltip: { trigger: "item" },
+    series: [{
+      type: "pie",
+      radius: ["40%", "70%"],
+      data: Object.entries(data.statusCounts).map(([name, value]) => ({
+        name,
+        value,
+        itemStyle: { color: STATUS_COLORS[name] ?? "#999" },
+      })),
+      label: { color: theme.palette.text.primary },
+    }],
   };
 
-  // --- Resolution Time by Severity (bar + SLA markLines) ---
-  const resData = SEVERITIES.map((sev) => ({
-    value: s.resolutionBySeverity[sev],
-    itemStyle: { color: SEVERITY_COLORS[sev] },
-  }));
-  const resolutionOption = {
-    tooltip: {
-      trigger: "axis",
-      backgroundColor: tooltipBg,
-      borderColor: line,
-      textStyle: { color: text },
-      valueFormatter: (v: number | null) => fmtMinutes(v),
-    },
-    grid: { left: 8, right: 16, bottom: 8, top: 24, containLabel: true },
-    xAxis: { type: "category", data: SEVERITIES, ...axis },
-    yAxis: { type: "value", name: "minutes", nameTextStyle: { color: muted }, ...axis },
+  const resBySev = data.resolutionBySeverity;
+  const sevKeys = ["critical", "warning", "info"];
+  const barOption = {
+    tooltip: { trigger: "axis" },
+    xAxis: { type: "category", data: sevKeys.map((s) => s.charAt(0).toUpperCase() + s.slice(1)) },
+    yAxis: { type: "value", name: "Minutes" },
     series: [
       {
         type: "bar",
-        data: resData,
-        barWidth: "45%",
-        label: { show: true, position: "top", color: text, formatter: (p: { value: number | null }) => fmtMinutes(p.value) },
+        data: sevKeys.map((s) => resBySev[s as keyof typeof resBySev] ?? 0),
+        itemStyle: { color: ({ dataIndex }: { dataIndex: number }) => SEVERITY_COLORS[sevKeys[dataIndex]] },
         markLine: {
-          symbol: "none",
-          data: [
-            { yAxis: SLA_TARGETS.critical, name: "Critical SLA", lineStyle: { color: SEVERITY_COLORS.critical, type: "dashed" }, label: { formatter: "Critical SLA 4h", color: muted, position: "insideEndTop" } },
-            { yAxis: SLA_TARGETS.warning, name: "Warning SLA", lineStyle: { color: SEVERITY_COLORS.warning, type: "dashed" }, label: { formatter: "Warning SLA 24h", color: muted, position: "insideEndTop" } },
-          ],
+          data: sevKeys
+            .filter((s) => SLA[s] != null)
+            .map((s) => ({ yAxis: SLA[s], name: `${s} SLA`, lineStyle: { type: "dashed" } })),
         },
       },
     ],
   };
 
-  // --- Alert Volume Trend (stacked area, one series per severity) ---
-  const dates = s.volumeTrend.map((p) => p.date.slice(5)); // MM-DD
-  const volumeOption = {
-    tooltip: { trigger: "axis", backgroundColor: tooltipBg, borderColor: line, textStyle: { color: text } },
-    legend: { top: 0, textStyle: { color: muted } },
-    grid: { left: 8, right: 16, bottom: 8, top: 32, containLabel: true },
-    xAxis: { type: "category", boundaryGap: false, data: dates, ...axis },
-    yAxis: { type: "value", ...axis },
-    series: SEVERITIES.map((sev) => ({
-      name: sev,
-      type: "line",
-      stack: "total",
-      areaStyle: { opacity: 0.25 },
-      smooth: true,
-      showSymbol: false,
-      lineStyle: { color: SEVERITY_COLORS[sev] },
-      itemStyle: { color: SEVERITY_COLORS[sev] },
-      data: s.volumeTrend.map((p) => p[sev]),
-    })),
+  const trend = data.volumeTrend;
+  const trendOption = {
+    tooltip: { trigger: "axis" },
+    legend: { data: ["Critical", "Warning", "Info"] },
+    xAxis: { type: "category", data: trend.map((t) => t.date) },
+    yAxis: { type: "value" },
+    series: [
+      { name: "Critical", type: "bar", stack: "total", data: trend.map((t) => t.critical), itemStyle: { color: SEVERITY_COLORS.critical } },
+      { name: "Warning", type: "bar", stack: "total", data: trend.map((t) => t.warning), itemStyle: { color: SEVERITY_COLORS.warning } },
+      { name: "Info", type: "bar", stack: "total", data: trend.map((t) => t.info), itemStyle: { color: SEVERITY_COLORS.info } },
+    ],
   };
-
-  const chartStyle = { height: 320 };
 
   return (
     <Box>
-      <Typography variant="h5" sx={{ fontWeight: 700, mb: 2 }}>
-        Analytics
-      </Typography>
+      <Typography variant="h5" fontWeight={700} mb={3}>Analytics</Typography>
 
-      <Grid container spacing={2} sx={{ mb: 1 }}>
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard label="Mean time to resolve" value={fmtMinutes(s.mttrMinutes)} sub={<Typography variant="caption" color="text.secondary">from logged time spent</Typography>} />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            label="Open alerts"
-            value={String(openTotal)}
-            sub={
-              <Typography variant="caption" color="text.secondary">
-                {s.openBySeverity.critical} critical · {s.openBySeverity.warning} warning · {s.openBySeverity.info} info
-              </Typography>
-            }
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard label="Resolved this week" value={String(s.resolvedThisWeek)} sub={<Trend now={s.resolvedThisWeek} prev={s.resolvedLastWeek} />} />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard label="Dismissal rate" value={`${Math.round(s.dismissalRate * 100)}%`} sub={<Typography variant="caption" color="text.secondary">of closed alerts dismissed</Typography>} />
+      <Grid container spacing={2} mb={3}>
+        <Grid item xs={6} sm={3}><MetricCard label="MTTR" value={mttr} /></Grid>
+        <Grid item xs={6} sm={3}><MetricCard label="Open alerts" value={totalOpen} /></Grid>
+        <Grid item xs={6} sm={3}><MetricCard label="Resolved this week" value={data.resolvedThisWeek} /></Grid>
+        <Grid item xs={6} sm={3}>
+          <MetricCard label="Dismissal rate" value={`${(data.dismissalRate * 100).toFixed(0)}%`} />
         </Grid>
       </Grid>
 
       <Grid container spacing={2}>
-        <Grid item xs={12} md={5}>
-          <ChartCard title="Alerts by Status">
-            <ReactECharts option={statusOption} style={chartStyle} notMerge />
-          </ChartCard>
+        <Grid item xs={12} md={4}>
+          <Card variant="outlined">
+            <CardContent>
+              <Typography variant="subtitle2" mb={1}>Status breakdown</Typography>
+              <ReactECharts option={donutOption} style={{ height: 260 }} />
+            </CardContent>
+          </Card>
         </Grid>
-        <Grid item xs={12} md={7}>
-          <ChartCard title="Resolution Time by Severity">
-            <ReactECharts option={resolutionOption} style={chartStyle} notMerge />
-          </ChartCard>
+        <Grid item xs={12} md={8}>
+          <Card variant="outlined">
+            <CardContent>
+              <Typography variant="subtitle2" mb={1}>Avg resolution time by severity (min) — dashed = SLA</Typography>
+              <ReactECharts option={barOption} style={{ height: 260 }} />
+            </CardContent>
+          </Card>
         </Grid>
         <Grid item xs={12}>
-          <ChartCard title="Alert Volume Trend">
-            <ReactECharts option={volumeOption} style={chartStyle} notMerge />
-          </ChartCard>
+          <Card variant="outlined">
+            <CardContent>
+              <Typography variant="subtitle2" mb={1}>Alert volume trend</Typography>
+              <ReactECharts option={trendOption} style={{ height: 260 }} />
+            </CardContent>
+          </Card>
         </Grid>
       </Grid>
     </Box>

@@ -1,125 +1,95 @@
 "use client";
 
 import ClearIcon from "@mui/icons-material/Clear";
-import SearchIcon from "@mui/icons-material/Search";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
-import InputAdornment from "@mui/material/InputAdornment";
+import FormControl from "@mui/material/FormControl";
+import IconButton from "@mui/material/IconButton";
+import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
-import Stack from "@mui/material/Stack";
+import Select from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
-import { alpha } from "@mui/material/styles";
+import Tooltip from "@mui/material/Tooltip";
+import { useDispatch, useSelector } from "react-redux";
 
-import type { AlertStatus, Device, Severity } from "../types";
-import { useListUsersQuery } from "../api/knaqApi";
+import type { AppDispatch, RootState } from "@/lib/store";
+import { SEVERITY_COLORS, STATUS_COLORS } from "@/lib/theme/ColorModeProvider";
 import {
   clearFilters,
-  setAssignee,
-  setDevice,
-  setQuery,
+  setAssignedTo,
+  setDeviceId,
+  setQ,
+  setSeverity,
   setSort,
-  toggleSeverity,
-  toggleStatus,
-  type SortKey,
+  setStatus,
 } from "../slices/filtersSlice";
-import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
-import { SEVERITY_COLORS, STATUS_COLORS } from "@/lib/theme/theme";
+import type { AlertStatus, KnaqUser, Device, Severity } from "../types";
 
 const SEVERITIES: Severity[] = ["critical", "warning", "info"];
-const STATUSES: { value: AlertStatus; label: string }[] = [
-  { value: "new", label: "New" },
-  { value: "acknowledged", label: "Acknowledged" },
-  { value: "resolved", label: "Resolved" },
-  { value: "dismissed", label: "Dismissed" },
-];
+const STATUSES: AlertStatus[] = ["new", "acknowledged", "resolved", "dismissed"];
 
-export default function FilterBar({ devices }: { devices: Device[] }) {
-  const dispatch = useAppDispatch();
-  const filters = useAppSelector((s) => s.filters);
-  const { data: usersData } = useListUsersQuery();
-  const users = usersData?.data ?? [];
+interface Props {
+  devices: Device[];
+  users: KnaqUser[];
+}
+
+export default function FilterBar({ devices, users }: Props) {
+  const dispatch = useDispatch<AppDispatch>();
+  const filters = useSelector((s: RootState) => s.filters);
+
+  function toggleSeverity(sev: Severity) {
+    const next = filters.severity.includes(sev)
+      ? filters.severity.filter((s) => s !== sev)
+      : [...filters.severity, sev];
+    dispatch(setSeverity(next));
+  }
+
+  function toggleStatus(st: AlertStatus) {
+    const next = filters.status.includes(st)
+      ? filters.status.filter((s) => s !== st)
+      : [...filters.status, st];
+    dispatch(setStatus(next));
+  }
 
   return (
-    <Stack spacing={1.5} sx={{ mb: 2 }}>
-      <Box sx={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
-        <Box>
-          <Typography variant="caption" color="text.secondary">
-            Severity
-          </Typography>
-          <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mt: 0.5 }}>
-            {SEVERITIES.map((sev) => {
-              const on = filters.severity.includes(sev);
-              return (
-                <Chip
-                  key={sev}
-                  label={sev}
-                  size="small"
-                  clickable
-                  onClick={() => dispatch(toggleSeverity(sev))}
-                  variant={on ? "filled" : "outlined"}
-                  sx={{
-                    textTransform: "capitalize",
-                    ...(on ? { bgcolor: SEVERITY_COLORS[sev], color: "#fff" } : { borderColor: SEVERITY_COLORS[sev] }),
-                  }}
-                />
-              );
-            })}
-          </Box>
-        </Box>
-
-        <Box>
-          <Typography variant="caption" color="text.secondary">
-            Status
-          </Typography>
-          <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mt: 0.5 }}>
-            {STATUSES.map(({ value, label }) => {
-              const on = filters.status.includes(value);
-              const color = STATUS_COLORS[value];
-              return (
-                <Chip
-                  key={value}
-                  label={label}
-                  size="small"
-                  clickable
-                  onClick={() => dispatch(toggleStatus(value))}
-                  variant={on ? "filled" : "outlined"}
-                  sx={{
-                    fontWeight: 600,
-                    color: on ? "#fff" : color,
-                    borderColor: color,
-                    ...(on ? { bgcolor: color } : { bgcolor: alpha(color, 0.08) }),
-                  }}
-                />
-              );
-            })}
-          </Box>
-        </Box>
-      </Box>
-
-      <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", alignItems: "center" }}>
-        <TextField
-          size="small"
-          placeholder="Search title or device…"
-          value={filters.q}
-          onChange={(e) => dispatch(setQuery(e.target.value))}
-          sx={{ flexGrow: 1, minWidth: 220 }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon fontSize="small" />
-              </InputAdornment>
-            ),
+    <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap", alignItems: "center", mb: 2 }}>
+      {SEVERITIES.map((sev) => (
+        <Chip
+          key={sev}
+          label={sev}
+          onClick={() => toggleSeverity(sev)}
+          variant={filters.severity.includes(sev) ? "filled" : "outlined"}
+          sx={{
+            borderColor: SEVERITY_COLORS[sev],
+            color: filters.severity.includes(sev) ? "#fff" : SEVERITY_COLORS[sev],
+            bgcolor: filters.severity.includes(sev) ? SEVERITY_COLORS[sev] : undefined,
+            textTransform: "capitalize",
+            cursor: "pointer",
           }}
         />
-        <TextField
-          select
-          size="small"
+      ))}
+      {STATUSES.map((st) => (
+        <Chip
+          key={st}
+          label={st}
+          onClick={() => toggleStatus(st)}
+          variant={filters.status.includes(st) ? "filled" : "outlined"}
+          sx={{
+            borderColor: STATUS_COLORS[st],
+            color: filters.status.includes(st) ? "#fff" : STATUS_COLORS[st],
+            bgcolor: filters.status.includes(st) ? STATUS_COLORS[st] : undefined,
+            textTransform: "capitalize",
+            cursor: "pointer",
+          }}
+        />
+      ))}
+
+      <FormControl size="small" sx={{ minWidth: 150 }}>
+        <InputLabel>Device</InputLabel>
+        <Select
+          value={filters.deviceId}
           label="Device"
-          value={filters.deviceId ?? ""}
-          onChange={(e) => dispatch(setDevice(e.target.value || null))}
-          sx={{ minWidth: 190 }}
+          onChange={(e) => dispatch(setDeviceId(e.target.value))}
         >
           <MenuItem value="">All devices</MenuItem>
           {devices.map((d) => (
@@ -127,38 +97,51 @@ export default function FilterBar({ devices }: { devices: Device[] }) {
               {d.name}
             </MenuItem>
           ))}
-        </TextField>
-        <TextField
-          select
-          size="small"
-          label="Assignee"
+        </Select>
+      </FormControl>
+
+      <FormControl size="small" sx={{ minWidth: 160 }}>
+        <InputLabel>Assignee</InputLabel>
+        <Select
           value={filters.assignedTo ?? ""}
-          onChange={(e) => dispatch(setAssignee(e.target.value === "" ? null : Number(e.target.value)))}
-          sx={{ minWidth: 170 }}
+          label="Assignee"
+          onChange={(e) => dispatch(setAssignedTo(e.target.value === "" ? null : Number(e.target.value)))}
         >
-          <MenuItem value="">Anyone</MenuItem>
+          <MenuItem value="">All assignees</MenuItem>
           {users.map((u) => (
             <MenuItem key={u.id} value={u.id}>
               {u.name}
             </MenuItem>
           ))}
-        </TextField>
-        <TextField
-          select
-          size="small"
-          label="Sort by"
+        </Select>
+      </FormControl>
+
+      <FormControl size="small" sx={{ minWidth: 120 }}>
+        <InputLabel>Sort</InputLabel>
+        <Select
           value={filters.sort}
-          onChange={(e) => dispatch(setSort(e.target.value as SortKey))}
-          sx={{ minWidth: 140 }}
+          label="Sort"
+          onChange={(e) => dispatch(setSort(e.target.value as "time" | "severity" | "status"))}
         >
-          <MenuItem value="time">Newest</MenuItem>
+          <MenuItem value="time">Time</MenuItem>
           <MenuItem value="severity">Severity</MenuItem>
           <MenuItem value="status">Status</MenuItem>
-        </TextField>
-        <Button startIcon={<ClearIcon />} onClick={() => dispatch(clearFilters())}>
-          Clear
-        </Button>
-      </Box>
-    </Stack>
+        </Select>
+      </FormControl>
+
+      <TextField
+        size="small"
+        placeholder="Search…"
+        value={filters.q}
+        onChange={(e) => dispatch(setQ(e.target.value))}
+        sx={{ minWidth: 180 }}
+      />
+
+      <Tooltip title="Clear filters">
+        <IconButton onClick={() => dispatch(clearFilters())}>
+          <ClearIcon />
+        </IconButton>
+      </Tooltip>
+    </Box>
   );
 }
