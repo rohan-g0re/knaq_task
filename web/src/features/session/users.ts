@@ -8,6 +8,9 @@ export interface DemoUser {
 export const DEMO_USERS: DemoUser[] = [
   { name: "Alice Chen", role: "Facilities Manager", company: "Brookfield Properties", token: "brookfield-alice-token" },
   { name: "Bob Martinez", role: "Field Technician", company: "Brookfield Properties", token: "brookfield-bob-token" },
+  { name: "Grace Kim", role: "Field Technician", company: "Brookfield Properties", token: "brookfield-grace-token" },
+  { name: "Henry Osei", role: "Field Technician", company: "Brookfield Properties", token: "brookfield-henry-token" },
+  { name: "Ivy Nakamura", role: "Facilities Coordinator", company: "Brookfield Properties", token: "brookfield-ivy-token" },
   { name: "Carol Davis", role: "Facilities Manager", company: "Hines", token: "hines-carol-token" },
   { name: "Dan Wright", role: "Field Technician", company: "Hines", token: "hines-dan-token" },
   { name: "Emi Tanaka", role: "Facilities Manager", company: "Mitsui Fudosan", token: "mitsui-emi-token" },

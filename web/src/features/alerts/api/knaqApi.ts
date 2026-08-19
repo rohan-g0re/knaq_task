@@ -5,6 +5,7 @@ import type {
   AlertStats,
   DevicesResponse,
   KnaqAlert,
+  LeaderboardResponse,
   UsersResponse,
 } from "../types";
 import type { FiltersState } from "../slices/filtersSlice";
@@ -109,6 +110,13 @@ export const knaqApi = createApi({
       providesTags: ["Alert"],
     }),
 
+    // Gamified board: XP is derived from the same timeline every triage action
+    // touches, so tagging "Alert" makes it refetch after acknowledge/resolve/etc.
+    getLeaderboard: build.query<LeaderboardResponse, void>({
+      query: () => "/leaderboard",
+      providesTags: ["Alert"],
+    }),
+
     listDevices: build.query<DevicesResponse, void>({
       query: () => "/devices",
       providesTags: ["Device"],
@@ -133,6 +141,7 @@ export const {
   useBulkAcknowledgeMutation,
   useBulkAssignMutation,
   useGetStatsQuery,
+  useGetLeaderboardQuery,
   useListDevicesQuery,
   useListUsersQuery,
 } = knaqApi;

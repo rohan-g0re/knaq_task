@@ -82,6 +82,44 @@ export interface UsersResponse {
   data: KnaqUser[];
 }
 
+export interface Badge {
+  id: string;
+  label: string;
+  icon: string;
+  description: string;
+  earned: boolean;
+}
+
+export interface LeaderboardPlayer {
+  userId: number;
+  name: string;
+  role: string;
+  points: number;
+  level: number;
+  xpIntoLevel: number;
+  xpForNextLevel: number;
+  rank: number;
+  stats: {
+    acknowledged: number;
+    assigned: number;
+    notes: number;
+    dismissed: number;
+    resolved: number;
+  };
+  badges: Badge[];
+}
+
+export interface LeaderboardResponse {
+  players: LeaderboardPlayer[];
+  summary: {
+    company: string;
+    totalPoints: number;
+    totalResolved: number;
+    activePlayers: number;
+  };
+  meUserId: number;
+}
+
 export interface AlertStats {
   statusCounts: Record<AlertStatus, number>;
   openBySeverity: Record<Severity, number>;

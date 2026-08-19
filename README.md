@@ -5,6 +5,11 @@ A full-stack alert triage system. A **FastAPI** backend ingests the raw device m
 multi-tenant REST API; a **Next.js 14** frontend lets a building manager acknowledge, assign,
 resolve, dismiss, and audit those alerts — reading and writing live, no mock data.
 
+An **Arena** leaderboard (`/leaderboard`) gamifies triage: every timeline action earns XP
+(with a severity bonus for closing critical alerts), which drives per-teammate levels, a
+podium, and unlockable achievement badges — all company-scoped and derived live from the same
+audit trail, so scores can never drift from what people actually did.
+
 ```
 api/    FastAPI + SQLAlchemy 2.0 + SQLite        (Python)
 web/    Next.js 14 App Router + MUI v5 + Redux Toolkit / RTK Query + Formik/Yup  (TypeScript, strict)
@@ -100,11 +105,14 @@ below apply identically.
 Auth is a bearer-token → user lookup; every request needs `Authorization: Bearer <token>`. The
 frontend is wired as **Alice Chen** because Brookfield has the most alerts (the liveliest demo).
 
-| Token                    | User         | Role               | Company               |
-| ------------------------ | ------------ | ------------------ | --------------------- |
-| `brookfield-alice-token` | Alice Chen   | Facilities Manager | Brookfield Properties |
-| `brookfield-bob-token`   | Bob Martinez | Field Technician   | Brookfield Properties |
-| `hines-carol-token`      | Carol Davis  | Facilities Manager | Hines                 |
+| Token                    | User         | Role                  | Company               |
+| ------------------------ | ------------ | --------------------- | --------------------- |
+| `brookfield-alice-token` | Alice Chen   | Facilities Manager    | Brookfield Properties |
+| `brookfield-bob-token`   | Bob Martinez | Field Technician      | Brookfield Properties |
+| `brookfield-grace-token` | Grace Kim    | Field Technician      | Brookfield Properties |
+| `brookfield-henry-token` | Henry Osei   | Field Technician      | Brookfield Properties |
+| `brookfield-ivy-token`   | Ivy Nakamura | Facilities Coordinator| Brookfield Properties |
+| `hines-carol-token`      | Carol Davis  | Facilities Manager    | Hines                 |
 | `hines-dan-token`        | Dan Wright   | Field Technician   | Hines                 |
 | `mitsui-emi-token`       | Emi Tanaka   | Facilities Manager | Mitsui Fudosan        |
 | `mitsui-frank-token`     | Frank Liu    | Field Technician   | Mitsui Fudosan        |
@@ -152,6 +160,7 @@ curl -H "Authorization: Bearer nope" localhost:8000/alerts                      
 | GET    | `/devices/:id/readings`    | **Required** `start`/`end`, interpreted and returned in **device-local** time.                                                            |
 | GET    | `/devices/:id/stats`       | **Bonus.** avg/min/max/count per numeric reading type, per device-local day.                                                              |
 | GET    | `/users`                   | Team members for assignment (company-scoped).                                                                                            |
+| GET    | `/leaderboard`             | **Gamified.** Company "Arena": per-teammate XP, level, and achievement badges derived live from the triage timeline; ranked standings + summary. |
 
 All read endpoints are scoped to the requesting token's company.
 

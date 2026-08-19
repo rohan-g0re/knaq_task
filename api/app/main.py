@@ -11,7 +11,7 @@ from .config import WEB_ORIGIN
 from .db import Base, SessionLocal, engine
 from .ingest import run_ingest
 from .models import Device
-from .routers import alerts, devices, users
+from .routers import alerts, devices, leaderboard, users
 from .seed import seed
 
 logging.basicConfig(level=logging.INFO)
@@ -61,3 +61,4 @@ def health():
 app.include_router(alerts.router)
 app.include_router(devices.router)
 app.include_router(users.router)
+app.include_router(leaderboard.router)

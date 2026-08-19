@@ -20,6 +20,7 @@ import { useColorMode } from "@/lib/theme/ColorModeProvider";
 const NAV = [
   { href: "/alerts", label: "Queue" },
   { href: "/analytics", label: "Analytics" },
+  { href: "/leaderboard", label: "Arena" },
 ];
 
 export default function AppChrome({ children }: { children: React.ReactNode }) {
